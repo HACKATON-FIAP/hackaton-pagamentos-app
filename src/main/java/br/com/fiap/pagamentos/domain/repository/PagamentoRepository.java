@@ -9,8 +9,7 @@ import java.util.Optional;
 
 @Repository
 public interface PagamentoRepository extends JpaRepository<Pagamento, Long> {
-    Optional<Pagamento> findById(Long id);
-    List<Pagamento> findAll();
+    Optional<Pagamento> findById(Long chave);
     Pagamento save(Pagamento pagamento);
 
 }

@@ -1,6 +1,4 @@
 package br.com.fiap.pagamentos.domain.model;
-
-import br.com.fiap.pagamentos.domain.enums.TipoPagamento;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,16 +14,30 @@ public class Pagamento {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idPagamento;
+    private Long chave_pagamento;
 
     @Column(nullable = false)
-    private Long idCarrinho;
+    private String cpf;
 
     @Column(nullable = false)
-    private Double valorTotal;
+    private String numero;
 
     @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
-    private TipoPagamento tipoPagamento;
+    private String data_validade;
+
+    @Column(nullable = false)
+    private String cvv;
+
+    @Column(nullable = false)
+    private Integer valor;
+
+    @Column(nullable = false)
+    private String descricao;
+
+    @Column(nullable = false)
+    private String metodo_pagamento;
+
+    @Column(nullable = false)
+    private String status;
 
 }

@@ -1,6 +1,7 @@
 package br.com.fiap.pagamentos.domain.service;
 
 import br.com.fiap.pagamentos.api.model.PagamentoDTO;
+import br.com.fiap.pagamentos.domain.exception.InternalServerErrorResponse;
 import br.com.fiap.pagamentos.domain.model.Pagamento;
 import br.com.fiap.pagamentos.domain.repository.PagamentoRepository;
 import lombok.AllArgsConstructor;
@@ -22,18 +23,26 @@ public class PagamentoService {
     private final ModelMapper modelMapper;
 
     private PagamentoRepository pagamentoRepository;
-    public void realizarPagamento (PagamentoDTO pagamentoDTO) {
-        logger.info("Realizar Pagamento Service");
-        var pagamento = modelMapper.map(pagamentoDTO, Pagamento.class);
-        pagamentoRepository.save(pagamento);
+    public Pagamento registrarPagamento (PagamentoDTO pagamentoDTO) throws InternalServerErrorResponse {
+        logger.info("Registrando pagamento: " + pagamentoDTO);
+        try {
+            var pagamento = modelMapper.map(pagamentoDTO, Pagamento.class);
+            pagamentoRepository.save(pagamento);
+            logger.info("Pagamento registrado com sucesso: " + pagamento);
+            return pagamento;
+        } catch (Exception e) {
+            logger.severe("Erro ao registrar pagamento: " + e.getMessage());
+            throw new InternalServerErrorResponse("Erro interno ao registrar pagamento");
+        }
     }
-    public Optional<List<Pagamento>> buscarTodosPagamentos() {
-        logger.info("Buscar Todos Pagamentos Service");
-        return Optional.of(pagamentoRepository.findAll());
-    }
-    public Optional<Pagamento> buscarPagamentoPorId(Long id) {
-        logger.info("Buscar Pagamento Por Id: ");
-        return pagamentoRepository.findById(id);
+    public Optional<Pagamento> consultarPagamentoCliente(Long chave) {
+        logger.info("Buscando pagamento por chave: " + chave);
+
+        var pagamento = pagamentoRepository.findById(chave);
+
+        logger.info("Pagamentos encontrados: " + pagamento);
+
+        return pagamento;
     }
 
 }
