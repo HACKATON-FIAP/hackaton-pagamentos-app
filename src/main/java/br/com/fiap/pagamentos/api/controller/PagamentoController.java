@@ -12,7 +12,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import javax.validation.Valid;
 import java.util.*;
 import java.util.logging.Logger;
 
@@ -26,7 +25,7 @@ public class PagamentoController {
 
     @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity registrarPagamento(@Valid @RequestBody PagamentoDTO dto, BindingResult result) throws InternalServerErrorResponse {
+    public ResponseEntity registrarPagamento(@RequestBody PagamentoDTO dto, BindingResult result) throws InternalServerErrorResponse {
 
         logger.info("Recebendo solicitação para registrar pagamento do cliente");
         if (result.hasErrors()) {
