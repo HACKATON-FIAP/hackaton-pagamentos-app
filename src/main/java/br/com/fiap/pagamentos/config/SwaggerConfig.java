@@ -14,8 +14,8 @@ public class SwaggerConfig {
     public OpenAPI openAPI() {
         return new OpenAPI()
             .info(new Info()
-                .title("Microsserviço de Pagamento")
-                .description("API desenvolvida para controlar todo o gerenciamento de pagamentos")
+                .title("Microsserviço de Pagamentos")
+                .description("API desenvolvida para controlar todo o gerenciamento de pagamentos.")
                 .version("1.0.0")
                 .termsOfService("Termo de uso: Open Source")
                 .license(new License()
@@ -24,7 +24,7 @@ public class SwaggerConfig {
                 )
             ).externalDocs(
                 new ExternalDocumentation()
-                    .description("Ricardo | Douglas | Jeferson")
+                    .description("Ricardo | Douglas | Jefferson")
                     .url("http://www.fiap.com.br"));
     }
 }
