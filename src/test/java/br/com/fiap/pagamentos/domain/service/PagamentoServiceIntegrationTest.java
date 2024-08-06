@@ -2,7 +2,6 @@ package br.com.fiap.pagamentos.domain.service;
 
 import br.com.fiap.pagamentos.api.model.PagamentoDTO;
 import br.com.fiap.pagamentos.api.model.PagamentoDTODataFactory;
-import br.com.fiap.pagamentos.api.response.sucess.ConsultaPorChaveResponse;
 import br.com.fiap.pagamentos.domain.model.Pagamento;
 import br.com.fiap.pagamentos.domain.repository.PagamentoRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,6 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.testcontainers.containers.PostgreSQLContainer;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -26,12 +26,10 @@ class PagamentoServiceIntegrationTest {
     @Autowired
     private PagamentoRepository pagamentoRepository;
 
-
     private final static PostgreSQLContainer<?> postgresContainer = new PostgreSQLContainer<>("postgres:16-alpine")
             .withDatabaseName("db_pagamentos")
             .withUsername("postgres")
             .withPassword("teste123");
-
     static {
         postgresContainer.start();
         System.setProperty("spring.datasource.url", postgresContainer.getJdbcUrl());
@@ -58,13 +56,13 @@ class PagamentoServiceIntegrationTest {
     }
     @Nested
     class ServicetoRepositoryConsultaPorChave {
-        /*@Test
+        @Test
         void deveConsultarPagamentoSettersAndGetters() {
             PagamentoDTO pagamentoDTO = PagamentoDTODataFactory.criarPagamentoDTOSettersAndGetters();
             pagamentoService.registrarPagamento(pagamentoDTO);
-            ConsultaPorChaveResponse pagamentoEncontrado = pagamentoService.consultarPagamentoCliente(pagamentoDTO.getCpf());
+            List<Optional<Pagamento>> pagamentoEncontrado = pagamentoService.consultarPagamentoCliente(pagamentoDTO.getCpf());
             assertThat(pagamentoEncontrado).isNotNull();
-            assertThat(pagamentoEncontrado.getValor()).isNotNull();
-        }*/
+            assertThat(pagamentoEncontrado.getFirst()).isNotNull();
+        }
     }
 }

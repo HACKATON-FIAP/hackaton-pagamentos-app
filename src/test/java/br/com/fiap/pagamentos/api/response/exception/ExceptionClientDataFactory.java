@@ -1,5 +1,8 @@
 package br.com.fiap.pagamentos.api.response.exception;
 
+import lombok.AllArgsConstructor;
+
+@AllArgsConstructor
 public class ExceptionClientDataFactory {
 
     public static BadRequestResponse criarBadRequestResponse() {
@@ -10,11 +13,6 @@ public class ExceptionClientDataFactory {
     public static NotFoundResponse criarNotFoundResponse() {
         return NotFoundResponse.builder()
                 .message("Recurso não encontrado. Verifique se o recurso solicitado existe.")
-                .build();
-    }
-    public static UnauthorizedResponse criarUnauthorizedResponse() {
-        return UnauthorizedResponse.builder()
-                .message("Acesso não autorizado. Verifique suas credenciais de autenticação.")
                 .build();
     }
 }

@@ -1,14 +1,14 @@
 package br.com.fiap.pagamentos.api.model;
+
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class PagamentoDTOTest {
     @Nested
-    class modelDT0Criacao {
+    class modelDtoCriacao {
 
         @Test
         void deveCriarModelPagamentoDTOSettersAndGetters() {

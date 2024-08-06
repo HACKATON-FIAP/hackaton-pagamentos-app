@@ -17,7 +17,7 @@ public class PagamentoDataFactory {
 
     public static Pagamento criarPagamentoSettersAndGetters() {
         Pagamento pagamento = new Pagamento();
-        pagamento.setChavePagamento(1l);
+        pagamento.setChavePagamento(1L);
         pagamento.setCpf("12345678901");
         pagamento.setNumero("1234567890123456");
         pagamento.setDataValidade("12/25");

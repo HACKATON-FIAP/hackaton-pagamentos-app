@@ -2,7 +2,6 @@ package br.com.fiap.pagamentos.api.handler;
 
 import br.com.fiap.pagamentos.api.response.exception.BadRequestResponse;
 import br.com.fiap.pagamentos.api.response.exception.NotFoundResponse;
-import br.com.fiap.pagamentos.api.response.exception.UnauthorizedResponse;
 import br.com.fiap.pagamentos.domain.exception.InternalServerErrorResponse;
 import br.com.fiap.pagamentos.domain.exception.ServiceUnavailableResponse;
 import org.springframework.http.HttpStatus;
@@ -19,10 +18,6 @@ public class ApiExceptionHandler {
     @ExceptionHandler(NotFoundResponse.class)
     public ResponseEntity<Object> handleNotFoundException(NotFoundResponse ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
-    }
-    @ExceptionHandler(UnauthorizedResponse.class)
-    public ResponseEntity<Object> handleUnauthorizedException(UnauthorizedResponse ex) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ex.getMessage());
     }
     @ExceptionHandler(InternalServerErrorResponse.class)
     public ResponseEntity<Object> handleInternalServerError(InternalServerErrorResponse ex) {

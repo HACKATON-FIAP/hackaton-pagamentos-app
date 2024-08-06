@@ -4,24 +4,20 @@ import br.com.fiap.pagamentos.api.model.PagamentoDTO;
 import br.com.fiap.pagamentos.api.model.PagamentoDTODataFactory;
 import br.com.fiap.pagamentos.api.response.exception.BadRequestResponse;
 import br.com.fiap.pagamentos.api.response.exception.NotFoundResponse;
-import br.com.fiap.pagamentos.api.response.sucess.ConsultaPorChaveDataFactory;
 import br.com.fiap.pagamentos.api.response.sucess.ConsultaPorChaveResponse;
 import br.com.fiap.pagamentos.domain.model.Pagamento;
 import br.com.fiap.pagamentos.domain.model.PagamentoDataFactory;
 import br.com.fiap.pagamentos.domain.repository.PagamentoRepository;
 import br.com.fiap.pagamentos.domain.service.PagamentoService;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
@@ -31,6 +27,7 @@ import static org.mockito.Mockito.*;
 
 class PagamentoControllerTest {
     private AutoCloseable closeable;
+
     @InjectMocks
     private PagamentoController pagamentoController;
 
@@ -38,27 +35,23 @@ class PagamentoControllerTest {
     private PagamentoService pagamentoService;
 
     @Mock
-    private ModelMapper modelMapper;
+    private PagamentoRepository pagamentoRepository;
 
     @Mock
-    private PagamentoRepository pagamentoRepository;
+    private ModelMapper modelMapper;
 
     @BeforeEach
     void setup() {
         closeable = MockitoAnnotations.openMocks(this);
     }
 
-    @AfterEach
-    void closeService() throws Exception {
-        closeable.close();
-    }
     @Nested
     class ControllerToServiceSave {
         @Nested
         class sucess {
 
             @Test
-            void deveSalvarPagamentoControllerSettersAndGetters() throws Exception {
+            void deveSalvarPagamentoControllerSettersAndGetters() {
                 // Arrange
                 PagamentoDTO pagamentoDTO = PagamentoDTODataFactory.criarPagamentoDTOSettersAndGetters();
                 Pagamento pagamento = PagamentoDataFactory.criarPagamentoSettersAndGetters();
@@ -67,15 +60,15 @@ class PagamentoControllerTest {
                 // Act
                 ResponseEntity<String> response = pagamentoController.registrarPagamento(pagamentoDTO);
                 // Assert
-                assertNotNull(response);
-                assertEquals(HttpStatus.OK, response.getStatusCode());
-                assertEquals(pagamento.getChavePagamento(), response.getBody());
+                Assertions.assertNotNull(response);
+                Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
+                Assertions.assertEquals("chave_pagamento: "+ pagamento.getChavePagamento(), response.getBody());
                 verify(pagamentoService, times(1)).registrarPagamento(pagamentoDTO);
             }
         }
         @Nested
         class exception{
-/*            @Test
+            @Test
             void deveRetornarExceptionQuandoCpfForNull() {
                 // Arrange
                 PagamentoDTO pagamentoDTO = PagamentoDTODataFactory.criarPagamentoDTOSettersAndGetters();
@@ -146,7 +139,7 @@ class PagamentoControllerTest {
 
                 // Act & Assert
                 assertThrows(BadRequestResponse.class, () -> { pagamentoController.registrarPagamento(pagamentoDTO);});
-            }*/
+            }
         }
     }
     @Nested
@@ -155,18 +148,23 @@ class PagamentoControllerTest {
         @Nested
         class sucess {
             @Test
-            void deveConsultarPagamentoControllerSettersAndGetters() throws Exception {
+            void deveConsultarPagamentoControllerSettersAndGetters() {
+
                 // Arrange
                 PagamentoDTO pagamentoDTO = PagamentoDTODataFactory.criarPagamentoDTOSettersAndGetters();
                 Pagamento pagamento = PagamentoDataFactory.criarPagamentoSettersAndGetters();
-                var response = ConsultaPorChaveDataFactory.criarConsultaPorChaveResponseSettersAndGetters();
-                // Mock
-                when(pagamentoService.registrarPagamento(pagamentoDTO)).thenReturn(pagamento);
-                // Act
-                pagamentoController.registrarPagamento(pagamentoDTO);
-                // Assert
-                verify(pagamentoService, times(1)).registrarPagamento(pagamentoDTO);
+                List<Optional<Pagamento>> pagamentos = List.of(Optional.of(pagamento));
 
+                // Mock
+                when(pagamentoService.consultarPagamentoCliente(pagamentoDTO.getCpf())).thenReturn(pagamentos);
+
+                // Act & Assert
+                ResponseEntity<List<ConsultaPorChaveResponse>> responseConsulta = pagamentoController.consultarPagamentoCliente(pagamentoDTO.getCpf());
+
+                Assertions.assertNotNull(responseConsulta);
+                Assertions.assertEquals(HttpStatus.OK, responseConsulta.getStatusCode());
+                Assertions.assertEquals(ConsultaPorChaveResponse.fromPagamentos(pagamentos), responseConsulta.getBody());
+                verify(pagamentoService, times(1)).consultarPagamentoCliente(pagamentoDTO.getCpf());
             }
         }
         @Nested
@@ -181,7 +179,7 @@ class PagamentoControllerTest {
             }
 
             @Test
-            void deveRetornarExceptionPagamentoNaoForEncontrado() throws Exception {
+            void deveRetornarExceptionPagamentoNaoForEncontrado(){
                 // Arrange
                 String chave = "111.111.111.11";// Valor inválido para gerar erro de validação
 
@@ -191,4 +189,10 @@ class PagamentoControllerTest {
 
         }
     }
+
+    @AfterEach
+    void closeService() throws Exception {
+        closeable.close();
+    }
+
 }

@@ -3,20 +3,23 @@ package br.com.fiap.pagamentos.api.controller;
 import br.com.fiap.pagamentos.api.model.PagamentoDTO;
 import br.com.fiap.pagamentos.api.model.PagamentoDTODataFactory;
 import br.com.fiap.pagamentos.api.response.sucess.ConsultaPorChaveResponse;
-import br.com.fiap.pagamentos.domain.model.Pagamento;
 import br.com.fiap.pagamentos.domain.repository.PagamentoRepository;
-import br.com.fiap.pagamentos.domain.service.PagamentoService;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import org.testcontainers.containers.PostgreSQLContainer;
 
-import java.util.Optional;
+import java.util.List;
+
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.junit.Assert.assertEquals;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -24,10 +27,9 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 class PagamentoControllerIntegrationTest {
 
     @Autowired
-    private PagamentoService pagamentoController;
+    private PagamentoController pagamentoController;
     @Autowired
     private PagamentoRepository pagamentoRepository;
-
     @Autowired
     private ModelMapper modelMapper;
 
@@ -51,10 +53,9 @@ class PagamentoControllerIntegrationTest {
             @Test
             void deveSalvarPagamentoSettersAndGetters() {
                 PagamentoDTO pagamentoDTO = PagamentoDTODataFactory.criarPagamentoDTOSettersAndGetters();
-                Pagamento pagamentoSalvo = pagamentoController.registrarPagamento(pagamentoDTO);
+                ResponseEntity<String> pagamentoSalvo = pagamentoController.registrarPagamento(pagamentoDTO);
+                Assertions.assertEquals(HttpStatus.OK, pagamentoSalvo.getStatusCode());
                 assertThat(pagamentoSalvo).isNotNull();
-                assertThat(pagamentoSalvo.getChavePagamento()).isNotNull();
-                assertThat(pagamentoSalvo.getCpf()).isEqualTo("12345678901");
             }
         }
         @Nested
@@ -69,14 +70,13 @@ class PagamentoControllerIntegrationTest {
 
         @Nested
         class sucess {
-/*            @Test
+            @Test
             void deveConsultarPagamentoSettersAndGetters() {
                 PagamentoDTO pagamentoDTO = PagamentoDTODataFactory.criarPagamentoDTOSettersAndGetters();
                 pagamentoController.registrarPagamento(pagamentoDTO);
-                ConsultaPorChaveResponse pagamentoEncontrado = pagamentoController.consultarPagamentoCliente(pagamentoDTO.getCpf());
-                assertThat(pagamentoEncontrado).isNotNull();
-                assertThat(pagamentoEncontrado.getValor()).isNotNull();
-            }*/
+                ResponseEntity<List<ConsultaPorChaveResponse>> pagamentoEncontrado = pagamentoController.consultarPagamentoCliente(pagamentoDTO.getCpf());
+                Assertions.assertEquals(HttpStatus.OK, pagamentoEncontrado.getStatusCode());
+            }
         }
         @Nested
         class exception{

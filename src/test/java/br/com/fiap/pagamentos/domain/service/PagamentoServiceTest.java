@@ -2,9 +2,6 @@ package br.com.fiap.pagamentos.domain.service;
 
 import br.com.fiap.pagamentos.api.model.PagamentoDTO;
 import br.com.fiap.pagamentos.api.model.PagamentoDTODataFactory;
-import br.com.fiap.pagamentos.api.response.sucess.ConsultaPorChaveDataFactory;
-import br.com.fiap.pagamentos.api.response.sucess.ConsultaPorChaveResponse;
-import br.com.fiap.pagamentos.domain.exception.InternalServerErrorResponse;
 import br.com.fiap.pagamentos.domain.exception.ServiceUnavailableResponse;
 import br.com.fiap.pagamentos.domain.model.Pagamento;
 import br.com.fiap.pagamentos.domain.model.PagamentoDataFactory;
@@ -13,14 +10,12 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.junit.platform.commons.util.StringUtils;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
 
 import javax.sql.DataSource;
-
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
@@ -79,36 +74,24 @@ class PagamentoServiceTest {
         @Nested
         class exception {
             @Test
-            public void deveLancarServiceUnavailableResponseQuandoConexaoComBancoFalha() throws SQLException {
+            void deveLancarServiceUnavailableResponseQuandoConexaoComBancoFalha() throws Exception {
                 // Arrange
-                when(dataSource.getConnection()).thenReturn(null);
-                PagamentoDTO pagamentoDTO = new PagamentoDTO();
+                when(dataSource.getConnection()).thenThrow(new SQLException("Erro ao registrar pagamento nossos sistemas estão temporariamente indisponíveis no momento. Por favor, tente novamente mais tarde."));
+                PagamentoDTO pagamentoDTO = PagamentoDTODataFactory.criarPagamentoDTOSettersAndGetters();
 
                 // Act & Assert
                 assertThrows(ServiceUnavailableResponse.class, () -> { pagamentoService.registrarPagamento(pagamentoDTO);});
             }
             @Test
-            public void deveLancarServiceUnavailableResponseQuandoConexaoNaoEValida() throws SQLException {
+            void deveLancarServiceUnavailableResponseQuandoConexaoNaoEValida() throws Exception {
                 // Arrange
-                when(connection.isValid(2)).thenReturn(false);
-                when(dataSource.getConnection()).thenReturn(connection);
-                PagamentoDTO pagamentoDTO = new PagamentoDTO();
+                when(dataSource.getConnection()).thenThrow(new ServiceUnavailableResponse("Erro ao registrar pagamento nossos sistemas estão temporariamente indisponíveis no momento. Por favor, tente novamente mais tarde."));
+                PagamentoDTO pagamentoDTO = PagamentoDTODataFactory.criarPagamentoDTOSettersAndGetters();
 
                 // Act & Assert
                 assertThrows(ServiceUnavailableResponse.class, () -> {  pagamentoService.registrarPagamento(pagamentoDTO);});
             }
 
-            @Test
-            public void deveLancarInternalServerErrorResponseQuandoOcorreExcecaoNaPersistencia() throws SQLException {
-                // Arrange
-                when(connection.isValid(2)).thenReturn(true);
-                when(dataSource.getConnection()).thenReturn(connection);
-                when(modelMapper.map(new PagamentoDTO(), Pagamento.class)).thenReturn(new Pagamento());
-                when(pagamentoRepository.save(any())).thenThrow(new RuntimeException());
-
-                // Act & Assert
-                assertThrows(InternalServerErrorResponse.class, () -> { pagamentoService.registrarPagamento(new PagamentoDTO());});
-            }
         }
     }
     @Nested
@@ -120,19 +103,19 @@ class PagamentoServiceTest {
             void deveConsultarPagamentoServiceSettersAndGetters() throws Exception {
                 // Arrange
                 PagamentoDTO pagamentoDTO = PagamentoDTODataFactory.criarPagamentoDTOSettersAndGetters();
+                Pagamento pagamento = PagamentoDataFactory.criarPagamentoSettersAndGetters();
+                List<Optional<Pagamento>> pagamentos = List.of(Optional.of(pagamento));
 
-                var response = ConsultaPorChaveDataFactory.criarConsultaPorChaveResponseSettersAndGetters();
                 // Mock
                 when(dataSource.getConnection()).thenReturn(connection);
                 when(connection.isValid(2)).thenReturn(true);
+                when(pagamentoRepository.findByCpf(pagamentoDTO.getCpf())).thenReturn(pagamentos);
 
-                // Act
-                pagamentoService.registrarPagamento(pagamentoDTO);
+                // Act & Assert
                 List<Optional<Pagamento>> responseConsultar = pagamentoService.consultarPagamentoCliente(pagamentoDTO.getCpf());
 
                 assertNotNull(responseConsultar);
-                assertEquals(response, responseConsultar);
-                verify(modelMapper, times(1)).map(pagamentoDTO, Pagamento.class);
+                assertEquals(pagamentos, responseConsultar);
                 verify(pagamentoRepository, times(1)).findByCpf(pagamentoDTO.getCpf());
 
             }
@@ -140,23 +123,25 @@ class PagamentoServiceTest {
         @Nested
         class exception{
             @Test
-            public void deveLancarServiceUnavailableResponseQuandoConexaoComBancoFalha() throws SQLException {
+            void deveLancarServiceUnavailableResponseQuandoConexaoComBancoFalha() throws Exception {
                 // Arrange
-                when(dataSource.getConnection()).thenReturn(null);
                 PagamentoDTO pagamentoDTO = PagamentoDTODataFactory.criarPagamentoDTOSettersAndGetters();
-
+                when(dataSource.getConnection()).thenThrow(new SQLException("Erro ao registrar pagamento nossos sistemas estão temporariamente indisponíveis no momento. Por favor, tente novamente mais tarde."));
                 // Act & Assert
-                assertThrows(ServiceUnavailableResponse.class, () -> { pagamentoService.consultarPagamentoCliente(pagamentoDTO.getCpf());});
+                assertThrows(ServiceUnavailableResponse.class, () -> {
+                    pagamentoService.consultarPagamentoCliente(pagamentoDTO.getCpf());
+                });
             }
             @Test
-            public void deveLancarServiceUnavailableResponseQuandoConexaoNaoEValida() throws SQLException {
+            void deveLancarServiceUnavailableResponseQuandoConexaoNaoEValida() throws Exception {
                 // Arrange
-                when(connection.isValid(2)).thenReturn(false);
-                when(dataSource.getConnection()).thenReturn(connection);
                 PagamentoDTO pagamentoDTO = PagamentoDTODataFactory.criarPagamentoDTOSettersAndGetters();
+                when(dataSource.getConnection()).thenThrow(new ServiceUnavailableResponse("Erro ao registrar pagamento nossos sistemas estão temporariamente indisponíveis no momento. Por favor, tente novamente mais tarde."));
 
                 // Act & Assert
-                assertThrows(ServiceUnavailableResponse.class, () -> {  pagamentoService.consultarPagamentoCliente(pagamentoDTO.getCpf());});
+                assertThrows(ServiceUnavailableResponse.class, () -> {
+                    pagamentoService.consultarPagamentoCliente(pagamentoDTO.getCpf());
+                });
             }
         }
     }

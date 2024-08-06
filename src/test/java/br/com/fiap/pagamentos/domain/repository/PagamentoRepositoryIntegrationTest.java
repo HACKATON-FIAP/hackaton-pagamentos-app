@@ -1,6 +1,5 @@
 package br.com.fiap.pagamentos.domain.repository;
 
-import br.com.fiap.pagamentos.api.response.sucess.ConsultaPorChaveResponse;
 import br.com.fiap.pagamentos.domain.model.Pagamento;
 import br.com.fiap.pagamentos.domain.model.PagamentoDataFactory;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,11 +11,15 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.testcontainers.containers.PostgreSQLContainer;
 
+import java.util.List;
+import java.util.Optional;
+
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 @SpringBootTest
 @ActiveProfiles("test")
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class PagamentoRepositoryIntegrationTest {
+
     @Autowired
     private PagamentoRepository pagamentoRepository;
 
@@ -59,22 +62,22 @@ class PagamentoRepositoryIntegrationTest {
     }
     @Nested
     class repositoryConsultaPorChave {
-/*        @Test
+      @Test
         void deveConsultarPagamentoBuilder() {
             Pagamento pagamento = PagamentoDataFactory.criarPagamentoBuilder();
             pagamentoRepository.save(pagamento);
-            ConsultaPorChaveResponse pagamentoEncontrado = pagamentoRepository.findByCpf(pagamento.getCpf());
-            assertThat(pagamentoEncontrado).isNotNull();
-            assertThat(pagamentoEncontrado.getValor()).isNotNull();
+            List<Optional<Pagamento>> p  = pagamentoRepository.findByCpf(pagamento.getCpf());
+            assertThat(p).isNotNull();
+            assertThat(p.getFirst()).isNotNull();
         }
 
         @Test
         void deveConsultarPagamentoSettersAndGetters() {
             Pagamento pagamento = PagamentoDataFactory.criarPagamentoSettersAndGetters();
             pagamentoRepository.save(pagamento);
-            ConsultaPorChaveResponse pagamentoEncontrado = pagamentoRepository.findByCpf(pagamento.getCpf());
+            List<Optional<Pagamento>> pagamentoEncontrado = pagamentoRepository.findByCpf(pagamento.getCpf());
             assertThat(pagamentoEncontrado).isNotNull();
-            assertThat(pagamentoEncontrado.getValor()).isNotNull();
-        }*/
+            assertThat(pagamentoEncontrado.getFirst()).isNotNull();
+        }
     }
 }

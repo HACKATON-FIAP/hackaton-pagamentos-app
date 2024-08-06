@@ -34,6 +34,9 @@ eureka:
         fetch-registry: true
         register-with-eureka: true
 
+api:
+    key: ${API_KEY:http://localhost:8082/api/cliente/validarCartao/}
+
 openapi:
     service:
         title: hackaton-pagamentos-app-service doc

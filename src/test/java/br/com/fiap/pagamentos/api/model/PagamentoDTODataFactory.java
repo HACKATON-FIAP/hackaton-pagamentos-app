@@ -1,4 +1,5 @@
 package br.com.fiap.pagamentos.api.model;
+
 public class PagamentoDTODataFactory {
 
     public static PagamentoDTO criarPagamentoDTOSettersAndGetters() {
