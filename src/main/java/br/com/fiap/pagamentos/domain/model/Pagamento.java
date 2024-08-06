@@ -14,7 +14,7 @@ public class Pagamento {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long chave_pagamento;
+    private Long chavePagamento;
 
     @Column(nullable = false)
     private String cpf;
@@ -23,7 +23,7 @@ public class Pagamento {
     private String numero;
 
     @Column(nullable = false)
-    private String data_validade;
+    private String dataValidade;
 
     @Column(nullable = false)
     private String cvv;
@@ -35,7 +35,7 @@ public class Pagamento {
     private String descricao;
 
     @Column(nullable = false)
-    private String metodo_pagamento;
+    private String metodoPagamento;
 
     @Column(nullable = false)
     private String status;

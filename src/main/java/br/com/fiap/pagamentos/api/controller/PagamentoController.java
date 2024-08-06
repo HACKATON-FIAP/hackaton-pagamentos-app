@@ -4,61 +4,62 @@ import br.com.fiap.pagamentos.api.model.PagamentoDTO;
 import br.com.fiap.pagamentos.api.response.exception.BadRequestResponse;
 import br.com.fiap.pagamentos.api.response.exception.NotFoundResponse;
 import br.com.fiap.pagamentos.api.response.sucess.ConsultaPorChaveResponse;
-import br.com.fiap.pagamentos.domain.exception.InternalServerErrorResponse;
 import br.com.fiap.pagamentos.domain.model.Pagamento;
 import br.com.fiap.pagamentos.domain.service.PagamentoService;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import java.util.*;
+
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 
 @RestController
 @RequestMapping("/api/pagamentos")
 @AllArgsConstructor
 public class PagamentoController {
 
-    private static final Logger logger = Logger.getLogger(PagamentoService.class.getName());
-    private PagamentoService pagamentoService;
+    private static final Logger logger = Logger.getLogger(PagamentoController.class.getName());
+    private final  PagamentoService pagamentoService;
 
     @PostMapping()
-    @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity registrarPagamento(@RequestBody PagamentoDTO dto, BindingResult result) throws InternalServerErrorResponse {
-
-        logger.info("Recebendo solicitação para registrar pagamento do cliente");
-        if (result.hasErrors()) {
-            StringBuilder errorMessage = new StringBuilder("Erro de validação: ");
-            result.getAllErrors().forEach(error -> errorMessage.append(error.getDefaultMessage()).append("; "));
-            logger.warning("Erro ao registrar pagamento: " + errorMessage.toString());
-            throw new BadRequestResponse("Erro ao registrar pagamento: " + errorMessage.toString());
+    public ResponseEntity<Long> registrarPagamento(@RequestBody PagamentoDTO dto) {
+        if(dto.getCpf() == null){
+            throw new BadRequestResponse("O cpf do cliente não pode ser nulo");
+        }
+        if(dto.getNumero() == null || !Pattern.matches("\\d+", dto.getNumero())){
+            throw new BadRequestResponse("O numero do cartão não pode ser nulo e deve conter apenas números");
+        }
+        if(dto.getDataValidade() == null){
+            throw new BadRequestResponse("A data de validade do cartão não pode ser nulo");
+        }
+        if(dto.getCvv() == null || !Pattern.matches("\\d+", dto.getCvv())){
+            throw new BadRequestResponse("O cvv do cartão não pode ser nulo e deve conter apenas números");
+        }
+        if(dto.getValor() == null || dto.getValor() < 0){
+            throw new BadRequestResponse("O valor da compra está nulo ou incorreto");
         }
 
-        Pagamento p = pagamentoService.registrarPagamento(dto);
-        logger.info("Pagamento registrado com sucesso: " + p.getChave_pagamento());
-        return ResponseEntity.ok(p.getChave_pagamento());
+        Pagamento pagamento = pagamentoService.registrarPagamento(dto);
+        logger.info("Pagamento registrado com sucesso");
+        return ResponseEntity.ok(pagamento.getChavePagamento());
     }
 
     @GetMapping("/cliente/{chave}")
-    public ResponseEntity consultarPagamentoCliente(@PathVariable Long chave) {
+    public ResponseEntity<ConsultaPorChaveResponse> consultarPagamentoCliente(@PathVariable String chave) {
 
-        logger.info("Recebendo solicitação para consultar pagamento do cliente com a chave: " + chave);
-        Optional<Pagamento> pagamento = pagamentoService.consultarPagamentoCliente(chave);
+        chave.replaceAll("\\D", "");
 
-        if (pagamento.isPresent()) {
-            Pagamento p = pagamento.get();
-            ConsultaPorChaveResponse response = ConsultaPorChaveResponse.builder()
-                .valor(p.getValor())
-                .descricao(p.getDescricao())
-                .metodoPagamento(p.getMetodo_pagamento())
-                .status(p.getStatus())
-                .build();
+        if(chave.isEmpty()){
+            throw new BadRequestResponse("O cpf do cliente não pode ser vazio");
+        }
+        logger.info("Recebendo solicitação para consultar pagamento do cliente com a chave");
+        ConsultaPorChaveResponse pagamentos = pagamentoService.consultarPagamentoCliente(chave);
 
-            logger.info("Pagamento encontrado: " + response);
-            return ResponseEntity.ok(response);
+        if (pagamentos != null) {
+            logger.info("Pagamento encontrado:");
+            return ResponseEntity.ok(pagamentos);
         } else {
-            logger.warning("Pagamento não encontrado para a chave: " + chave);
+            logger.warning("Pagamento não encontrado para a chave");
             throw new NotFoundResponse("Pagamento não encontrado para a chave: " + chave);
         }
     }
