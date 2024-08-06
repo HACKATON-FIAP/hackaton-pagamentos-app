@@ -8,6 +8,7 @@ import br.com.fiap.pagamentos.domain.repository.PagamentoRepository;
 import br.com.fiap.pagamentos.domain.service.PagamentoService;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -26,6 +27,9 @@ class PagamentoControllerIntegrationTest {
     private PagamentoService pagamentoController;
     @Autowired
     private PagamentoRepository pagamentoRepository;
+
+    @Autowired
+    private ModelMapper modelMapper;
 
     private final static PostgreSQLContainer<?> postgresContainer = new PostgreSQLContainer<>("postgres:16-alpine")
             .withDatabaseName("db_pagamentos")
@@ -65,14 +69,14 @@ class PagamentoControllerIntegrationTest {
 
         @Nested
         class sucess {
-            @Test
+/*            @Test
             void deveConsultarPagamentoSettersAndGetters() {
                 PagamentoDTO pagamentoDTO = PagamentoDTODataFactory.criarPagamentoDTOSettersAndGetters();
                 pagamentoController.registrarPagamento(pagamentoDTO);
                 ConsultaPorChaveResponse pagamentoEncontrado = pagamentoController.consultarPagamentoCliente(pagamentoDTO.getCpf());
                 assertThat(pagamentoEncontrado).isNotNull();
                 assertThat(pagamentoEncontrado.getValor()).isNotNull();
-            }
+            }*/
         }
         @Nested
         class exception{

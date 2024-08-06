@@ -1,4 +1,3 @@
-/*
 package br.com.fiap.pagamentos;
 
 import org.springframework.boot.test.context.SpringBootTest;
@@ -27,4 +26,3 @@ class PagamentosAppApplicationTests {
 		}
 	}
 }
-*/

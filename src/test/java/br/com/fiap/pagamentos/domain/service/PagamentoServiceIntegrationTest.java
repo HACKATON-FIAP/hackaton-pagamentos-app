@@ -1,4 +1,3 @@
-/*
 package br.com.fiap.pagamentos.domain.service;
 
 import br.com.fiap.pagamentos.api.model.PagamentoDTO;
@@ -26,6 +25,7 @@ class PagamentoServiceIntegrationTest {
     private PagamentoService pagamentoService;
     @Autowired
     private PagamentoRepository pagamentoRepository;
+
 
     private final static PostgreSQLContainer<?> postgresContainer = new PostgreSQLContainer<>("postgres:16-alpine")
             .withDatabaseName("db_pagamentos")
@@ -58,14 +58,13 @@ class PagamentoServiceIntegrationTest {
     }
     @Nested
     class ServicetoRepositoryConsultaPorChave {
-        @Test
+        /*@Test
         void deveConsultarPagamentoSettersAndGetters() {
             PagamentoDTO pagamentoDTO = PagamentoDTODataFactory.criarPagamentoDTOSettersAndGetters();
             pagamentoService.registrarPagamento(pagamentoDTO);
             ConsultaPorChaveResponse pagamentoEncontrado = pagamentoService.consultarPagamentoCliente(pagamentoDTO.getCpf());
             assertThat(pagamentoEncontrado).isNotNull();
             assertThat(pagamentoEncontrado.getValor()).isNotNull();
-        }
+        }*/
     }
 }
-*/

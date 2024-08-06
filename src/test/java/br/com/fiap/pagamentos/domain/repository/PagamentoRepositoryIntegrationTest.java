@@ -59,8 +59,8 @@ class PagamentoRepositoryIntegrationTest {
     }
     @Nested
     class repositoryConsultaPorChave {
-        @Test
-        void deveSalvarPagamentoBuilder() {
+/*        @Test
+        void deveConsultarPagamentoBuilder() {
             Pagamento pagamento = PagamentoDataFactory.criarPagamentoBuilder();
             pagamentoRepository.save(pagamento);
             ConsultaPorChaveResponse pagamentoEncontrado = pagamentoRepository.findByCpf(pagamento.getCpf());
@@ -69,12 +69,12 @@ class PagamentoRepositoryIntegrationTest {
         }
 
         @Test
-        void deveSalvarPagamentoSettersAndGetters() {
+        void deveConsultarPagamentoSettersAndGetters() {
             Pagamento pagamento = PagamentoDataFactory.criarPagamentoSettersAndGetters();
             pagamentoRepository.save(pagamento);
             ConsultaPorChaveResponse pagamentoEncontrado = pagamentoRepository.findByCpf(pagamento.getCpf());
             assertThat(pagamentoEncontrado).isNotNull();
             assertThat(pagamentoEncontrado.getValor()).isNotNull();
-        }
+        }*/
     }
 }

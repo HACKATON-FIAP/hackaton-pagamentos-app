@@ -12,6 +12,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import javax.sql.DataSource;
 import java.sql.Connection;
+import java.util.List;
+import java.util.Optional;
 import java.util.logging.Logger;
 
 @Service
@@ -43,14 +45,14 @@ public class PagamentoService {
             throw new InternalServerErrorResponse("Erro interno ao registrar pagamento");
         }
     }
-    public ConsultaPorChaveResponse consultarPagamentoCliente(String chave) {
+    public List<Optional<Pagamento>> consultarPagamentoCliente(String chave) {
 
         try (Connection connection = dataSource.getConnection()) {
             if (connection == null || !connection.isValid(2)) {
                 logger.severe("Erro ao buscar pagamentos");
                 throw new ServiceUnavailableResponse("Nossos sistemas estão temporariamente indisponíveis no momento. Por favor, tente novamente mais tarde.");
             }
-            ConsultaPorChaveResponse pagamentos = pagamentoRepository.findByCpf(chave);
+            List<Optional<Pagamento>> pagamentos = pagamentoRepository.findByCpf(chave);
             logger.info("Pagamentos encontrados");
             return pagamentos;
         } catch (Exception e) {

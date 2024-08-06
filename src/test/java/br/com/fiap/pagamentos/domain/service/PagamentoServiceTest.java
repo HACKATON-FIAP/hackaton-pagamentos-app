@@ -23,6 +23,9 @@ import javax.sql.DataSource;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.List;
+import java.util.Optional;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -117,17 +120,15 @@ class PagamentoServiceTest {
             void deveConsultarPagamentoServiceSettersAndGetters() throws Exception {
                 // Arrange
                 PagamentoDTO pagamentoDTO = PagamentoDTODataFactory.criarPagamentoDTOSettersAndGetters();
-                Pagamento pagamento = PagamentoDataFactory.criarPagamentoSettersAndGetters();
+
                 var response = ConsultaPorChaveDataFactory.criarConsultaPorChaveResponseSettersAndGetters();
                 // Mock
                 when(dataSource.getConnection()).thenReturn(connection);
                 when(connection.isValid(2)).thenReturn(true);
-                when(modelMapper.map(pagamentoDTO, Pagamento.class)).thenReturn(pagamento);
-                when(pagamentoRepository.findByCpf(pagamentoDTO.getCpf())).thenReturn(response);
 
                 // Act
                 pagamentoService.registrarPagamento(pagamentoDTO);
-                ConsultaPorChaveResponse responseConsultar = pagamentoService.consultarPagamentoCliente(pagamentoDTO.getCpf());
+                List<Optional<Pagamento>> responseConsultar = pagamentoService.consultarPagamentoCliente(pagamentoDTO.getCpf());
 
                 assertNotNull(responseConsultar);
                 assertEquals(response, responseConsultar);
