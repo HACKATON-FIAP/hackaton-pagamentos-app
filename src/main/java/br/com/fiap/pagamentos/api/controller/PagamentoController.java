@@ -20,13 +20,14 @@ import java.util.regex.Pattern;
 @RestController
 @AllArgsConstructor
 @RequestMapping("/api/pagamentos")
+@CrossOrigin("*")
 public class PagamentoController {
 
     private static final Logger logger = Logger.getLogger(PagamentoController.class.getName());
     private final  PagamentoService pagamentoService;
 
-    @Value("${api.key}")
-    private final String apiCartaoUrl;
+    //@Value("${api.key}")
+    //private final String apiCartaoUrl;
 
     @PostMapping
     public ResponseEntity<String> registrarPagamento(@RequestBody PagamentoDTO dto) {
@@ -72,13 +73,13 @@ public class PagamentoController {
         }
     }
 
-    public void validaCartao(String cpf) {
-        RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<String> retornoCPF = restTemplate.getForEntity(String.format("%s%s", apiCartaoUrl, cpf), String.class);
-        if (retornoCPF.getStatusCode().is4xxClientError()) {
-            throw new BadRequestResponse("Não é permitido operação de cartão com CPF inválido!");
-        }
-    }
+//    public void validaCartao(String cpf) {
+//        RestTemplate restTemplate = new RestTemplate();
+//        ResponseEntity<String> retornoCPF = restTemplate.getForEntity(String.format("%s%s", apiCartaoUrl, cpf), String.class);
+//        if (retornoCPF.getStatusCode().is4xxClientError()) {
+//            throw new BadRequestResponse("Não é permitido operação de cartão com CPF inválido!");
+//        }
+//    }
 
 }
 
