@@ -1,5 +1,5 @@
 server:
-    port: ${PORT:8084}
+    port: ${PORT:8088}
 
 spring:
     application:
@@ -33,9 +33,6 @@ eureka:
             defatulZone: ${eureka.client.serviceUrl.defaultZone:http://localhost:8761/eureka}
         fetch-registry: true
         register-with-eureka: true
-
-api:
-    key: ${API_KEY:http://localhost:8082/api/cartao/consultar/}
 
 openapi:
     service:

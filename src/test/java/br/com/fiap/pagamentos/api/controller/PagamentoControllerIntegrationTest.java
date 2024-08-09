@@ -4,6 +4,7 @@ import br.com.fiap.pagamentos.api.model.PagamentoDTO;
 import br.com.fiap.pagamentos.api.model.PagamentoDTODataFactory;
 import br.com.fiap.pagamentos.api.response.sucess.ConsultaPorChaveResponse;
 import br.com.fiap.pagamentos.domain.repository.PagamentoRepository;
+import br.com.fiap.pagamentos.domain.service.CartaoService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -19,7 +20,6 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.Assert.assertEquals;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -31,9 +31,11 @@ class PagamentoControllerIntegrationTest {
     @Autowired
     private PagamentoRepository pagamentoRepository;
     @Autowired
+    private CartaoService cartaoService;
+    @Autowired
     private ModelMapper modelMapper;
 
-    private final static PostgreSQLContainer<?> postgresContainer = new PostgreSQLContainer<>("postgres:16-alpine")
+    private static final  PostgreSQLContainer<?> postgresContainer = new PostgreSQLContainer<>("postgres:16-alpine")
             .withDatabaseName("db_pagamentos")
             .withUsername("postgres")
             .withPassword("teste123");

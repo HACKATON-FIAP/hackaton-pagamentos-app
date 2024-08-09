@@ -6,10 +6,7 @@ import br.com.fiap.pagamentos.domain.exception.ServiceUnavailableResponse;
 import br.com.fiap.pagamentos.domain.model.Pagamento;
 import br.com.fiap.pagamentos.domain.model.PagamentoDataFactory;
 import br.com.fiap.pagamentos.domain.repository.PagamentoRepository;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -66,7 +63,7 @@ class PagamentoServiceTest {
 
                 // Assert
                 assertNotNull(p);
-                assertEquals(pagamento, p);
+                Assertions.assertEquals(pagamento, p);
                 verify(modelMapper, times(1)).map(pagamentoDTO, Pagamento.class);
                 verify(pagamentoRepository, times(1)).save(pagamento);
             }

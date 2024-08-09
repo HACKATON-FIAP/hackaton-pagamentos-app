@@ -1,5 +1,7 @@
 package br.com.fiap.pagamentos.api.controller;
 
+import br.com.fiap.pagamentos.api.model.CartaoDTO;
+import br.com.fiap.pagamentos.api.model.CartaoDTODataFactory;
 import br.com.fiap.pagamentos.api.model.PagamentoDTO;
 import br.com.fiap.pagamentos.api.model.PagamentoDTODataFactory;
 import br.com.fiap.pagamentos.api.response.exception.BadRequestResponse;
@@ -8,6 +10,7 @@ import br.com.fiap.pagamentos.api.response.sucess.ConsultaPorChaveResponse;
 import br.com.fiap.pagamentos.domain.model.Pagamento;
 import br.com.fiap.pagamentos.domain.model.PagamentoDataFactory;
 import br.com.fiap.pagamentos.domain.repository.PagamentoRepository;
+import br.com.fiap.pagamentos.domain.service.CartaoService;
 import br.com.fiap.pagamentos.domain.service.PagamentoService;
 import org.junit.jupiter.api.*;
 import org.mockito.InjectMocks;
@@ -20,8 +23,6 @@ import org.springframework.http.ResponseEntity;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
@@ -33,6 +34,9 @@ class PagamentoControllerTest {
 
     @Mock
     private PagamentoService pagamentoService;
+
+    @Mock
+    private CartaoService cartaoService;
 
     @Mock
     private PagamentoRepository pagamentoRepository;
@@ -55,8 +59,12 @@ class PagamentoControllerTest {
                 // Arrange
                 PagamentoDTO pagamentoDTO = PagamentoDTODataFactory.criarPagamentoDTOSettersAndGetters();
                 Pagamento pagamento = PagamentoDataFactory.criarPagamentoSettersAndGetters();
+                CartaoDTO cartaoDTO = CartaoDTODataFactory.criarCartaoDTOSettersAndGetters();
+
                 // Mock
+                when(cartaoService.validarCartao(pagamentoDTO.getCpf())).thenReturn(cartaoDTO);
                 when(pagamentoService.registrarPagamento(pagamentoDTO)).thenReturn(pagamento);
+
                 // Act
                 ResponseEntity<String> response = pagamentoController.registrarPagamento(pagamentoDTO);
                 // Assert
@@ -67,7 +75,7 @@ class PagamentoControllerTest {
             }
         }
         @Nested
-        class exception{
+        class exceptionPagamento {
             @Test
             void deveRetornarExceptionQuandoCpfForNull() {
                 // Arrange
@@ -75,8 +83,11 @@ class PagamentoControllerTest {
                 pagamentoDTO.setCpf(null);
 
                 // Act & Assert
-                assertThrows(BadRequestResponse.class, () -> { pagamentoController.registrarPagamento(pagamentoDTO);});
+                assertThrows(BadRequestResponse.class, () -> {
+                    pagamentoController.registrarPagamento(pagamentoDTO);
+                });
             }
+
             @Test
             void deveRetornarExceptionQuandoNumeroForNull() {
                 // Arrange
@@ -84,8 +95,11 @@ class PagamentoControllerTest {
                 pagamentoDTO.setNumero(null);
 
                 // Act & Assert
-                assertThrows(BadRequestResponse.class, () -> { pagamentoController.registrarPagamento(pagamentoDTO);});
+                assertThrows(BadRequestResponse.class, () -> {
+                    pagamentoController.registrarPagamento(pagamentoDTO);
+                });
             }
+
             @Test
             void deveRetornarExceptionQuandoNumeroTiverCaracteres() {
                 // Arrange
@@ -93,8 +107,11 @@ class PagamentoControllerTest {
                 pagamentoDTO.setNumero("A");
 
                 // Act & Assert
-                assertThrows(BadRequestResponse.class, () -> { pagamentoController.registrarPagamento(pagamentoDTO);});
+                assertThrows(BadRequestResponse.class, () -> {
+                    pagamentoController.registrarPagamento(pagamentoDTO);
+                });
             }
+
             @Test
             void deveRetornarExceptionQuandoDataValidadeForNull() {
                 // Arrange
@@ -102,8 +119,11 @@ class PagamentoControllerTest {
                 pagamentoDTO.setDataValidade(null);
 
                 // Act & Assert
-                assertThrows(BadRequestResponse.class, () -> { pagamentoController.registrarPagamento(pagamentoDTO);});
+                assertThrows(BadRequestResponse.class, () -> {
+                    pagamentoController.registrarPagamento(pagamentoDTO);
+                });
             }
+
             @Test
             void deveRetornarExceptionQuandoCvvForNull() {
                 // Arrange
@@ -111,8 +131,11 @@ class PagamentoControllerTest {
                 pagamentoDTO.setCvv(null);
 
                 // Act & Assert
-                assertThrows(BadRequestResponse.class, () -> { pagamentoController.registrarPagamento(pagamentoDTO);});
+                assertThrows(BadRequestResponse.class, () -> {
+                    pagamentoController.registrarPagamento(pagamentoDTO);
+                });
             }
+
             @Test
             void deveRetornarExceptionQuandoCvvTiverCaracteres() {
                 // Arrange
@@ -120,8 +143,11 @@ class PagamentoControllerTest {
                 pagamentoDTO.setCvv("A");
 
                 // Act & Assert
-                assertThrows(BadRequestResponse.class, () -> { pagamentoController.registrarPagamento(pagamentoDTO);});
+                assertThrows(BadRequestResponse.class, () -> {
+                    pagamentoController.registrarPagamento(pagamentoDTO);
+                });
             }
+
             @Test
             void deveRetornarExceptionQuandoValorForNull() {
                 // Arrange
@@ -129,8 +155,11 @@ class PagamentoControllerTest {
                 pagamentoDTO.setValor(null);
 
                 // Act & Assert
-                assertThrows(BadRequestResponse.class, () -> { pagamentoController.registrarPagamento(pagamentoDTO);});
+                assertThrows(BadRequestResponse.class, () -> {
+                    pagamentoController.registrarPagamento(pagamentoDTO);
+                });
             }
+
             @Test
             void deveRetornarExceptionQuandoValorForNegativo() {
                 // Arrange
@@ -138,8 +167,62 @@ class PagamentoControllerTest {
                 pagamentoDTO.setValor(-10); // Valor inválido para gerar erro de validação
 
                 // Act & Assert
-                assertThrows(BadRequestResponse.class, () -> { pagamentoController.registrarPagamento(pagamentoDTO);});
+                assertThrows(BadRequestResponse.class, () -> {
+                    pagamentoController.registrarPagamento(pagamentoDTO);
+                });
             }
+        }
+        @Nested
+        class exceptionCartao{
+            @Test
+            void deveRetornarExceptionQuandoCpfForDiferenteDeCartao() {
+                // Arrange
+                PagamentoDTO pagamentoDTO = PagamentoDTODataFactory.criarPagamentoDTOSettersAndGetters();
+
+                // Act & Assert
+                assertThrows(BadRequestResponse.class, () -> { pagamentoController.registrarPagamento(pagamentoDTO); });
+            }
+            @Test
+            void deveRetornarExceptionQuandoNumeroForDiferenteDeCartao() {
+                // Arrange
+                PagamentoDTO pagamentoDTO = PagamentoDTODataFactory.criarPagamentoDTOSettersAndGetters();
+                CartaoDTO cartaoDTO = CartaoDTODataFactory.criarCartaoDTOSettersAndGetters();
+                cartaoDTO.setNumero("1");
+
+                // Act & Assert
+                assertThrows(BadRequestResponse.class, () -> { pagamentoController.validarCartao(cartaoDTO, pagamentoDTO);});
+            }
+            @Test
+            void deveRetornarExceptionQuandoDataValidadeForDiferenteDeCartao() {
+                // Arrange
+                PagamentoDTO pagamentoDTO = PagamentoDTODataFactory.criarPagamentoDTOSettersAndGetters();
+                CartaoDTO cartaoDTO = CartaoDTODataFactory.criarCartaoDTOSettersAndGetters();
+                cartaoDTO.setDataValidade("1");
+
+                // Act & Assert
+                assertThrows(BadRequestResponse.class, () -> { pagamentoController.validarCartao(cartaoDTO, pagamentoDTO);});
+            }
+            @Test
+            void deveRetornarExceptionQuandoCvvForDiferenteDeCartao() {
+                // Arrange
+                PagamentoDTO pagamentoDTO = PagamentoDTODataFactory.criarPagamentoDTOSettersAndGetters();
+                CartaoDTO cartaoDTO = CartaoDTODataFactory.criarCartaoDTOSettersAndGetters();
+                cartaoDTO.setCvv("1");
+
+                // Act & Assert
+                assertThrows(BadRequestResponse.class, () -> { pagamentoController.validarCartao(cartaoDTO, pagamentoDTO);});
+            }
+            @Test
+            void deveRetornarExceptionQuandoValorMaiorQueCartao() {
+                // Arrange
+                PagamentoDTO pagamentoDTO = PagamentoDTODataFactory.criarPagamentoDTOSettersAndGetters();
+                CartaoDTO cartaoDTO = CartaoDTODataFactory.criarCartaoDTOSettersAndGetters();
+                cartaoDTO.setLimite(1L);
+
+                // Act & Assert
+                assertThrows(BadRequestResponse.class, () -> { pagamentoController.validarCartao(cartaoDTO, pagamentoDTO);});
+            }
+
         }
     }
     @Nested

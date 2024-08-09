@@ -26,7 +26,7 @@ class PagamentoServiceIntegrationTest {
     @Autowired
     private PagamentoRepository pagamentoRepository;
 
-    private final static PostgreSQLContainer<?> postgresContainer = new PostgreSQLContainer<>("postgres:16-alpine")
+    private static final PostgreSQLContainer<?> postgresContainer = new PostgreSQLContainer<>("postgres:16-alpine")
             .withDatabaseName("db_pagamentos")
             .withUsername("postgres")
             .withPassword("teste123");
