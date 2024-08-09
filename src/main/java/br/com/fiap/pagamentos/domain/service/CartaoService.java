@@ -21,7 +21,7 @@ public class CartaoService {
     }
 
     public CartaoDTO validarCartao(String cpf) {
-        String url = "http://localhost:8082/api/cartao/consultar/"+cpf;
+        String url = "http://hackaton-cartao-app:8082/api/cartao/consultar/"+cpf;
         try {
             ResponseEntity<CartaoDTO> response = restTemplate.getForEntity(url, CartaoDTO.class);
             return response.getBody();
@@ -31,7 +31,7 @@ public class CartaoService {
     }
 
     public CartaoDTO update(CartaoDTO cartao) {
-        String url = "http://localhost:8082/api/cartao/update";
+        String url = "http://hackaton-cartao-app:8082/api/cartao/update";
         try {
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
