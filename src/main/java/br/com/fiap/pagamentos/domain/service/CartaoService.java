@@ -31,7 +31,7 @@ public class CartaoService {
     }
 
     public CartaoDTO update(CartaoDTO cartao) {
-        String url = "http://localhost:8082/api/cartao/update/";
+        String url = "http://localhost:8082/api/cartao/update";
         try {
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
